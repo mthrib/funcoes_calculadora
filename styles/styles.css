@@ -1,98 +1,122 @@
-/* Reset básico */
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: monospace;
-  background: #f5f7fa;
-  color: #333;
+let tipoFuncao = '';
+let grafico;
+
+// Registra o plugin globalmente (muito importante)
+Chart.register(window['chartjs-plugin-zoom'].default || Chart.Zoom);
+
+function setFunctionType(tipo) {
+  tipoFuncao = tipo;
+  const inputDiv = document.getElementById('inputs');
+  inputDiv.innerHTML = '';
+
+  if (tipo === 'afim') {
+    inputDiv.innerHTML = `
+      <p>y = ax + b</p>
+      <input type="number" id="a" placeholder="Coeficiente a" />
+      <input type="number" id="b" placeholder="Coeficiente b" />
+    `;
+  } else if (tipo === 'exponencial') {
+    inputDiv.innerHTML = `
+      <p>y = a · b<sup>x</sup></p>
+      <input type="number" id="a" placeholder="Coeficiente a" />
+      <input type="number" id="b" placeholder="Base b" />
+    `;
+  }
 }
 
-/* Header fixo no topo com fundo azul */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 999;
-  display: flex;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: rgb(0, 113, 188);
-  height: 80px;
-  gap: 20px;
-  box-sizing: border-box;
+function gerarGrafico() {
+  const a = parseFloat(document.getElementById('a')?.value);
+  const b = parseFloat(document.getElementById('b')?.value);
+
+  if (isNaN(a) || isNaN(b)) {
+    alert("Por favor, preencha todos os campos corretamente!");
+    return;
+  }
+
+  const x = [];
+  const y = [];
+
+  for (let i = -10; i <= 10; i++) {
+    x.push(i);
+    if (tipoFuncao === 'afim') {
+    y.push(a * i + b);
+    } else if (tipoFuncao === 'exponencial') {
+        y.push(Math.pow(a, i));  // aqui tiramos o 'a *' e 'b' e só usamos a^i
+  }
 }
 
-/* Logo à esquerda, centralizada verticalmente */
-.logo {
-  width: 30%;
-  height: auto;
-  margin: 0;
-  order: 0;
+  const ctx = document.getElementById('grafico').getContext('2d');
+
+  if (grafico) grafico.destroy();
+
+  grafico = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: x,
+      datasets: [
+        {
+          label:
+            tipoFuncao === 'afim'
+              ? 'Função Afim: y = ax + b'
+              : 'Função Exponencial: y = a^x',
+          data: y,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          pointBackgroundColor: '#2563eb',
+          fill: true,
+          tension: 0.25,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'x',
+            color: '#555',
+          },
+          grid: {
+            color: '#eee',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'y',
+            color: '#555',
+          },
+          grid: {
+            color: '#eee',
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#333',
+          },
+        },
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'xy',
+            modifierKey: 'ctrl', // só pan segurando Ctrl (opcional)
+          },
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true,
+            },
+            mode: 'xy',
+          },
+        },
+      },
+    },
+  });
 }
 
-/* Título centralizado no espaço restante */
-header h1 {
-  color: white;
-  font-size: 2.5rem;
-  margin: 0;
-  order: 1;
-  flex-grow: 1;
-  text-align: center;
-}
-
-/* Espaço para o conteúdo não ficar sob o header fixo */
-.container {
-  padding-top: 100px; /* Espaço maior que a altura do header */
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* Estilos gerais do corpo */
-.buttons {
-  margin-bottom: 30px;
-}
-
-button {
-  padding: 10px 20px;
-  margin: 10px;
-  border: none;
-  border-radius: 8px;
-  background-color: rgb(0, 113, 188);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-button:hover {
-  background-color: rgb(2, 81, 133);
-  transform: translate(5px, 5px);
-  border-bottom: 5px #00000031 solid;
-}
-
-#inputs {
-  margin: 20px 0;
-}
-
-#inputs input {
-  padding: 10px 20px;
-  margin: 5px;
-  border: 1px solid #ebeaea;
-  border-radius: 6px;
-  width: 120px;
-}
-
-.grafico-container {
-  margin-top: 20px;
-}
-
-#grafico {
-  margin-top: 30px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
+  
