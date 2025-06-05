@@ -17,19 +17,29 @@ function setFunctionType(tipo) {
     `;
   } else if (tipo === 'exponencial') {
     inputDiv.innerHTML = `
-      <p>y = a · b<sup>x</sup></p>
-      <input type="number" id="a" placeholder="Coeficiente a" />
-      <input type="number" id="b" placeholder="Base b" />
+      <p>y = a<sup>x</sup></p>
+      <input type="number" id="a" placeholder="Base a" />
     `;
   }
 }
 
 function gerarGrafico() {
   const a = parseFloat(document.getElementById('a')?.value);
-  const b = parseFloat(document.getElementById('b')?.value);
+  const bInput = document.getElementById('b');  
+  const b = bInput ? parseFloat(bInput.value) : null;
 
-  if (isNaN(a) || isNaN(b)) {
-    alert("Por favor, preencha todos os campos corretamente!");
+  if (tipoFuncao === 'afim') {
+    if (isNaN(a) || isNaN(b)) {
+      alert("Por favor, preencha todos os campos corretamente!");
+      return;
+    }
+  } else if (tipoFuncao === 'exponencial') {
+    if (isNaN(a)) {
+      alert("Por favor, preencha o campo corretamente!");
+      return;
+    }
+  } else {
+    alert("Selecione uma função primeiro!");
     return;
   }
 
@@ -39,11 +49,11 @@ function gerarGrafico() {
   for (let i = -10; i <= 10; i++) {
     x.push(i);
     if (tipoFuncao === 'afim') {
-    y.push(a * i + b);
+      y.push(a * i + b);
     } else if (tipoFuncao === 'exponencial') {
-        y.push(Math.pow(a, i));  // aqui tiramos o 'a *' e 'b' e só usamos a^i
+      y.push(Math.pow(a, i));
+    }
   }
-}
 
   const ctx = document.getElementById('grafico').getContext('2d');
 
@@ -102,7 +112,7 @@ function gerarGrafico() {
           pan: {
             enabled: true,
             mode: 'xy',
-            modifierKey: 'ctrl', // só pan segurando Ctrl (opcional)
+            modifierKey: 'ctrl', // pan segurando Ctrl
           },
           zoom: {
             wheel: {
