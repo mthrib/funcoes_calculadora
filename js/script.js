@@ -39,11 +39,11 @@ function gerarGrafico() {
   for (let i = -10; i <= 10; i++) {
     x.push(i);
     if (tipoFuncao === 'afim') {
-      y.push(a * i + b);
+    y.push(a * i + b);
     } else if (tipoFuncao === 'exponencial') {
-      y.push(a * Math.pow(b, i));
-    }
+        y.push(Math.pow(a, i));  // aqui tiramos o 'a *' e 'b' e só usamos a^i
   }
+}
 
   const ctx = document.getElementById('grafico').getContext('2d');
 
@@ -58,7 +58,7 @@ function gerarGrafico() {
           label:
             tipoFuncao === 'afim'
               ? 'Função Afim: y = ax + b'
-              : 'Função Exponencial: y = a·b^x',
+              : 'Função Exponencial: y = a^x',
           data: y,
           borderColor: '#3b82f6',
           backgroundColor: 'rgba(59, 130, 246, 0.1)',
