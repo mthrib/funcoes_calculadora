@@ -9,33 +9,44 @@ function setFunctionType(tipo) {
   if (tipo === 'afim') {
     inputDiv.innerHTML = `
       <p>y = ax + b</p>
-      <input type="number" id="a" placeholder="Coeficiente a" />
-      <input type="number" id="b" placeholder="Coeficiente b" />
-      <input type="number" id="xMin" placeholder="x mínimo" />
-      <input type="number" id="xMax" placeholder="x máximo" />
+      <input type="number" id="aAfim" placeholder="Coeficiente a" />
+      <input type="number" id="bAfim" placeholder="Coeficiente b" />
     `;
   } else if (tipo === 'exponencial') {
     inputDiv.innerHTML = `
       <p>y = a · b<sup>x</sup></p>
-      <input type="number" id="a" placeholder="Coeficiente a" />
-      <input type="number" id="b" placeholder="Base b" />
-      <input type="number" id="xMin" placeholder="x mínimo" />
-      <input type="number" id="xMax" placeholder="x máximo" />
+      <input type="number" id="aExp" placeholder="Coeficiente a" />
+      <input type="number" id="bExp" placeholder="Base b" />
+      <input type="number" id="xMinExp" placeholder="x mínimo" />
+      <input type="number" id="xMaxExp" placeholder="x máximo" />
     `;
   }
 }
 
 function gerarGrafico() {
-  const a = parseFloat(document.getElementById('a')?.value);
-  const b = parseFloat(document.getElementById('b')?.value);
-  const xMin = parseInt(document.getElementById('xMin')?.value);
-  const xMax = parseInt(document.getElementById('xMax')?.value);
+  let a, b, xMin, xMax;
 
-  if (isNaN(a) || isNaN(b) || isNaN(xMin) || isNaN(xMax)) {
-    alert("Preencha todos os campos corretamente!");
+  if (tipoFuncao === 'afim') {
+    a = parseFloat(document.getElementById('aAfim')?.value);
+    b = parseFloat(document.getElementById('bAfim')?.value);
+    xMin = -10;  // intervalo fixo para afim
+    xMax = 10;
+  } else if (tipoFuncao === 'exponencial') {
+    a = parseFloat(document.getElementById('aExp')?.value);
+    b = parseFloat(document.getElementById('bExp')?.value);
+    xMin = parseInt(document.getElementById('xMinExp')?.value);
+    xMax = parseInt(document.getElementById('xMaxExp')?.value);
+  } else {
+    alert("Selecione um tipo de função primeiro!");
     return;
   }
-  if (xMin >= xMax) {
+
+  if (isNaN(a) || isNaN(b) || isNaN(xMin) || isNaN(xMax)) {
+    alert("Por favor, preencha todos os campos corretamente!");
+    return;
+  }
+
+  if (tipoFuncao === 'exponencial' && xMin >= xMax) {
     alert("x mínimo deve ser menor que x máximo!");
     return;
   }
@@ -73,36 +84,3 @@ function gerarGrafico() {
       }]
     },
     options: {
-      responsive: true,
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'x',
-            color: '#555'
-          },
-          grid: {
-            color: '#eee'
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'y',
-            color: '#555'
-          },
-          grid: {
-            color: '#eee'
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          labels: {
-            color: '#333'
-          }
-        }
-      }
-    }
-  });
-}
