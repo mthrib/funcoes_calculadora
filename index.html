@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seja Bem-Vindo(a)</title>
+  <link rel="stylesheet" href="styles/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Calculadora de Funções</h1>
+        <img class="logo" src="../logo-branco-progressao-educacao.png" alt="">
+    </header>
+  <div class="container">
+
+    <div class="buttons">
+      <button onclick="setFunctionType('afim')">Função Afim</button>
+      <button onclick="setFunctionType('exponencial')">Função Exponencial</button>
+    </div>
+
+    <div id="inputs"></div>
+
+    <button id="btnGerar" onclick="gerarGrafico()">Gerar Gráfico</button>
+
+    <div class="grafico-container">
+      <canvas id="grafico"></canvas>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
