@@ -4,38 +4,39 @@ let grafico;
 function setFunctionType(tipo) {
   tipoFuncao = tipo;
   const inputDiv = document.getElementById('inputs');
-  inputDiv.innerHTML = `
-    <input type="number" id="xMin" placeholder="x mínimo" />
-    <input type="number" id="xMax" placeholder="x máximo" />
-  `;
+  inputDiv.innerHTML = '';
 
   if (tipo === 'afim') {
-    inputDiv.innerHTML += `
+    inputDiv.innerHTML = `
       <p>y = ax + b</p>
       <input type="number" id="a" placeholder="Coeficiente a" />
       <input type="number" id="b" placeholder="Coeficiente b" />
+      <input type="number" id="xMin" placeholder="x mínimo" />
+      <input type="number" id="xMax" placeholder="x máximo" />
     `;
   } else if (tipo === 'exponencial') {
-    inputDiv.innerHTML += `
-      <p>y = a^x</p>
-      <input type="number" id="a" placeholder="Base a" />
+    inputDiv.innerHTML = `
+      <p>y = a · b<sup>x</sup></p>
+      <input type="number" id="a" placeholder="Coeficiente a" />
+      <input type="number" id="b" placeholder="Base b" />
+      <input type="number" id="xMin" placeholder="x mínimo" />
+      <input type="number" id="xMax" placeholder="x máximo" />
     `;
   }
 }
 
 function gerarGrafico() {
+  const a = parseFloat(document.getElementById('a')?.value);
+  const b = parseFloat(document.getElementById('b')?.value);
   const xMin = parseInt(document.getElementById('xMin')?.value);
   const xMax = parseInt(document.getElementById('xMax')?.value);
-  const a = parseFloat(document.getElementById('a')?.value);
-  const b = tipoFuncao === 'afim' ? parseFloat(document.getElementById('b')?.value) : null;
 
-  if (isNaN(xMin) || isNaN(xMax) || isNaN(a) || (tipoFuncao === 'afim' && isNaN(b))) {
-    alert("Por favor, preencha todos os campos corretamente!");
+  if (isNaN(a) || isNaN(b) || isNaN(xMin) || isNaN(xMax)) {
+    alert("Preencha todos os campos corretamente!");
     return;
   }
-
-  if (xMax < xMin) {
-    alert("O valor de x máximo deve ser maior ou igual ao x mínimo.");
+  if (xMin >= xMax) {
+    alert("x mínimo deve ser menor que x máximo!");
     return;
   }
 
@@ -47,7 +48,7 @@ function gerarGrafico() {
     if (tipoFuncao === 'afim') {
       y.push(a * i + b);
     } else if (tipoFuncao === 'exponencial') {
-      y.push(Math.pow(a, i));
+      y.push(a * Math.pow(b, i));
     }
   }
 
@@ -60,7 +61,9 @@ function gerarGrafico() {
     data: {
       labels: x,
       datasets: [{
-        label: tipoFuncao === 'afim' ? 'Função Afim: y = ax + b' : 'Função Exponencial: y = a^x',
+        label: tipoFuncao === 'afim'
+          ? `Função Afim: y = ${a}x + ${b}`
+          : `Função Exponencial: y = ${a}·${b}^x`,
         data: y,
         borderColor: '#3b82f6',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -73,19 +76,31 @@ function gerarGrafico() {
       responsive: true,
       scales: {
         x: {
-          title: { display: true, text: 'x', color: '#555' },
-          grid: { color: '#eee' }
+          title: {
+            display: true,
+            text: 'x',
+            color: '#555'
+          },
+          grid: {
+            color: '#eee'
+          }
         },
         y: {
-          title: { display: true, text: 'y', color: '#555' },
-          grid: { color: '#eee' }
+          title: {
+            display: true,
+            text: 'y',
+            color: '#555'
+          },
+          grid: {
+            color: '#eee'
+          }
         }
       },
       plugins: {
-        legend: { labels: { color: '#333' } },
-        zoom: {
-          pan: { enabled: true, mode: 'xy', modifierKey: 'ctrl' },
-          zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'xy' }
+        legend: {
+          labels: {
+            color: '#333'
+          }
         }
       }
     }
