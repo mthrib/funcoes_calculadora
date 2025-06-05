@@ -11,6 +11,8 @@ function setFunctionType(tipo) {
       <p>y = ax + b</p>
       <input type="number" id="aAfim" placeholder="Coeficiente a" />
       <input type="number" id="bAfim" placeholder="Coeficiente b" />
+      <input type="number" id="xMinAfim" placeholder="x mínimo" />
+      <input type="number" id="xMaxAfim" placeholder="x máximo" />
     `;
   } else if (tipo === 'exponencial') {
     inputDiv.innerHTML = `
@@ -29,8 +31,8 @@ function gerarGrafico() {
   if (tipoFuncao === 'afim') {
     a = parseFloat(document.getElementById('aAfim')?.value);
     b = parseFloat(document.getElementById('bAfim')?.value);
-    xMin = -10;  // intervalo fixo para afim
-    xMax = 10;
+    xMin = parseInt(document.getElementById('xMinAfim')?.value);
+    xMax = parseInt(document.getElementById('xMaxAfim')?.value);
   } else if (tipoFuncao === 'exponencial') {
     a = parseFloat(document.getElementById('aExp')?.value);
     b = parseFloat(document.getElementById('bExp')?.value);
@@ -41,12 +43,12 @@ function gerarGrafico() {
     return;
   }
 
-  if (isNaN(a) || isNaN(b) || isNaN(xMin) || isNaN(xMax)) {
+  if ([a, b, xMin, xMax].some(v => isNaN(v))) {
     alert("Por favor, preencha todos os campos corretamente!");
     return;
   }
 
-  if (tipoFuncao === 'exponencial' && xMin >= xMax) {
+  if (xMin >= xMax) {
     alert("x mínimo deve ser menor que x máximo!");
     return;
   }
@@ -84,3 +86,36 @@ function gerarGrafico() {
       }]
     },
     options: {
+      responsive: true,
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'x',
+            color: '#555'
+          },
+          grid: {
+            color: '#eee'
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'y',
+            color: '#555'
+          },
+          grid: {
+            color: '#eee'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#333'
+          }
+        }
+      }
+    }
+  });
+}
