@@ -1,6 +1,7 @@
 let tipoFuncao = '';
 let grafico;
 
+// Registrar plugin de zoom
 Chart.register(window['chartjs-plugin-zoom'].default || Chart.Zoom);
 
 function setFunctionType(tipo) {
@@ -13,15 +14,11 @@ function setFunctionType(tipo) {
       <p>y = ax + b</p>
       <input type="number" id="a" placeholder="Coeficiente a" />
       <input type="number" id="b" placeholder="Coeficiente b" />
-      <input type="number" id="xMin" placeholder="x mínimo" />
-      <input type="number" id="xMax" placeholder="x máximo" />
     `;
   } else if (tipo === 'exponencial') {
     inputDiv.innerHTML = `
       <p>y = a<sup>x</sup></p>
       <input type="number" id="a" placeholder="Base a" />
-      <input type="number" id="xMin" placeholder="x mínimo" />
-      <input type="number" id="xMax" placeholder="x máximo" />
     `;
   }
 }
@@ -30,13 +27,6 @@ function gerarGrafico() {
   const a = parseFloat(document.getElementById('a')?.value);
   const bInput = document.getElementById('b');
   const b = bInput ? parseFloat(bInput.value) : null;
-  const xMin = parseInt(document.getElementById('xMin')?.value);
-  const xMax = parseInt(document.getElementById('xMax')?.value);
-
-  if (isNaN(xMin) || isNaN(xMax) || xMin >= xMax) {
-    alert("Informe um intervalo válido para x (x mínimo menor que x máximo)!");
-    return;
-  }
 
   if (tipoFuncao === 'afim') {
     if (isNaN(a) || isNaN(b)) {
@@ -56,12 +46,12 @@ function gerarGrafico() {
   const x = [];
   const y = [];
 
-  for (let i = xMin; i <= xMax; i++) {
+  for (let i = -10; i <= 10; i++) {
     x.push(i);
     if (tipoFuncao === 'afim') {
       y.push(a * i + b);
     } else if (tipoFuncao === 'exponencial') {
-      y.push(Math.pow(a, i));
+      y.push(Math.pow(a, i));  // y = a^x
     }
   }
 
