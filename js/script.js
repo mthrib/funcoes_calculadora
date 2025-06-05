@@ -1,7 +1,6 @@
 let tipoFuncao = '';
 let grafico;
 
-// Registra o plugin globalmente (muito importante)
 Chart.register(window['chartjs-plugin-zoom'].default || Chart.Zoom);
 
 function setFunctionType(tipo) {
@@ -14,28 +13,39 @@ function setFunctionType(tipo) {
       <p>y = ax + b</p>
       <input type="number" id="a" placeholder="Coeficiente a" />
       <input type="number" id="b" placeholder="Coeficiente b" />
+      <input type="number" id="xMin" placeholder="x mínimo" />
+      <input type="number" id="xMax" placeholder="x máximo" />
     `;
   } else if (tipo === 'exponencial') {
     inputDiv.innerHTML = `
       <p>y = a<sup>x</sup></p>
       <input type="number" id="a" placeholder="Base a" />
+      <input type="number" id="xMin" placeholder="x mínimo" />
+      <input type="number" id="xMax" placeholder="x máximo" />
     `;
   }
 }
 
 function gerarGrafico() {
   const a = parseFloat(document.getElementById('a')?.value);
-  const bInput = document.getElementById('b');  
+  const bInput = document.getElementById('b');
   const b = bInput ? parseFloat(bInput.value) : null;
+  const xMin = parseInt(document.getElementById('xMin')?.value);
+  const xMax = parseInt(document.getElementById('xMax')?.value);
+
+  if (isNaN(xMin) || isNaN(xMax) || xMin >= xMax) {
+    alert("Informe um intervalo válido para x (x mínimo menor que x máximo)!");
+    return;
+  }
 
   if (tipoFuncao === 'afim') {
     if (isNaN(a) || isNaN(b)) {
-      alert("Por favor, preencha todos os campos corretamente!");
+      alert("Por favor, preencha os coeficientes a e b corretamente!");
       return;
     }
   } else if (tipoFuncao === 'exponencial') {
     if (isNaN(a)) {
-      alert("Por favor, preencha o campo corretamente!");
+      alert("Por favor, preencha a base a corretamente!");
       return;
     }
   } else {
@@ -46,7 +56,7 @@ function gerarGrafico() {
   const x = [];
   const y = [];
 
-  for (let i = -10; i <= 10; i++) {
+  for (let i = xMin; i <= xMax; i++) {
     x.push(i);
     if (tipoFuncao === 'afim') {
       y.push(a * i + b);
@@ -112,7 +122,7 @@ function gerarGrafico() {
           pan: {
             enabled: true,
             mode: 'xy',
-            modifierKey: 'ctrl', // pan segurando Ctrl
+            modifierKey: 'ctrl',
           },
           zoom: {
             wheel: {
